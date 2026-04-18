@@ -18,7 +18,7 @@ from utils.display import format_value, Y_LABELS, X_COL_MAP, render_bond_card
 from utils.plots import build_sector_chart
 
 
-@st.dialog("Détails de l'obligation", width="large")
+@st.dialog("Détails de l'obligation", width="medium")
 def _bond_detail_dialog(bond: pd.Series, theme: str) -> None:
     st.markdown(render_bond_card(bond, theme), unsafe_allow_html=True)
     _, col_close = st.columns([3, 1])
