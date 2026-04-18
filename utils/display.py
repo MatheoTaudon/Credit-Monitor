@@ -181,10 +181,11 @@ def render_bond_card(bond: pd.Series, theme: str) -> str:
         _row("Duration", format_value(b.get("ModIfied Duration"), "{:.2f}")),
         _row("Tenor",    format_value(b.get("Tenor"),             "{:.1f} ans")),
     ])
+    
     issue = "".join([
         _row("Coupon",    coupon_str),
         _row("Encours",   amount_str),
-        _row("Callable",  "Oui" if call == "Y" else "Non"),
+        _row("Seniorité", str(b.get("Seniority", "N/A"))), # <-- Remplacement effectué ici
         _row("Next Call", next_call_str),
         _row("Maturité",  maturity_str),
     ])
