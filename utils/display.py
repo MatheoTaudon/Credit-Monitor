@@ -137,15 +137,6 @@ def render_badge(label: str, color: str, text_color: str = "#000") -> str:
 
 
 def render_bond_card(bond: pd.Series, theme: str) -> str:
-    """Génère la fiche détail HTML complète d'un bond.
-
-    Args:
-        bond  : Series pandas avec les données du bond.
-        theme : "dark" ou "light".
-
-    Returns:
-        Chaîne HTML prête pour st.markdown(..., unsafe_allow_html=True).
-    """
     from utils.style import COLORS, FONT
 
     is_dark  = theme == "dark"
@@ -156,12 +147,14 @@ def render_bond_card(bond: pd.Series, theme: str) -> str:
     orange   = COLORS["bloomberg_orange"]
 
     def _row(lbl: str, val: str) -> str:
+        # RÉDUCTION DU PADDING : de 16px à 6px pour gagner de la place en largeur
+        # Taille de police très légèrement ajustée
         return (
             f'<tr>'
-            f'<td style="color:{text_sec};padding:3px 16px 3px 0;font-size:0.82rem;'
+            f'<td style="color:{text_sec};padding:2px 6px 2px 0;font-size:0.8rem;'
             f'white-space:nowrap;font-family:{FONT}">{lbl}</td>'
-            f'<td style="color:{text_col};font-weight:600;font-size:0.82rem;'
-            f'font-family:{FONT}">{val}</td>'
+            f'<td style="color:{text_col};font-weight:600;font-size:0.8rem;'
+            f'white-space:nowrap;font-family:{FONT}">{val}</td>'
             f'</tr>'
         )
 
@@ -200,34 +193,35 @@ def render_bond_card(bond: pd.Series, theme: str) -> str:
     msci      = b.get("MSCI ESG Rating", "N/A")
     esg_color = COLORS["positive"] if green == "Y" else text_sec
 
+    # RÉDUCTION DU GAP : de 1.5rem à 0.5rem entre les deux tableaux
+    # RÉDUCTION DU PADDING GLOBAL : de 1.2rem à 0.8rem
     html = (
-        f'<div style="background:{surface};border:1px solid {border};border-left:4px solid {orange};border-radius:10px;padding:1.2rem 1.5rem;margin-top:0.5rem">'
+        f'<div style="background:{surface};border:1px solid {border};border-left:4px solid {orange};border-radius:10px;padding:0.8rem 1rem;margin-top:0.5rem">'
         f'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
         f'<div>'
         f'<p style="margin:0;color:{text_col};font-size:1.1rem;font-weight:700;font-family:{FONT}">{b.get("Short Name","—")}</p>'
         f'<p style="margin:0.2rem 0 0;color:{text_sec};font-size:0.8rem;font-family:{FONT}">{b.get("ISIN","—")} &nbsp;·&nbsp; {b.get("Ticker","—")}</p>'
-        f'<p style="margin:0.1rem 0 0;color:{text_sec};font-size:0.8rem;font-family:{FONT}">{b.get("Country","N/A")} &nbsp;·&nbsp; {b.get("BICS Industry","N/A")} &nbsp;·&nbsp; {b.get("GICS Sector","N/A")} &nbsp;·&nbsp; {b.get("Seniority","N/A")}</p>'
+        f'<p style="margin:0.1rem 0 0;color:{text_sec};font-size:0.8rem;font-family:{FONT}">{b.get("Country","N/A")} &nbsp;·&nbsp; {b.get("BICS Industry","N/A")}</p>'
         f'</div>'
-        f'<div style="text-align:right;flex-shrink:0;padding-left:1rem">'
-        f'<span style="font-size:1.5rem;font-weight:700;color:{orange};font-family:{FONT}">{rating}</span>'
+        f'<div style="text-align:right;flex-shrink:0;padding-left:0.5rem">'
+        f'<span style="font-size:1.3rem;font-weight:700;color:{orange};font-family:{FONT}">{rating}</span><br>'
         f'{green_b}{call_b}'
         f'</div>'
         f'</div>'
-        f'<hr style="border:none;border-top:1px solid {border};margin:0.75rem 0">'
-        f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">'
+        f'<hr style="border:none;border-top:1px solid {border};margin:0.6rem 0">'
+        f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">' # <-- Les 2 colonnes maintenues, mais rapprochées
         f'<div>'
-        f'<p style="color:{text_sec};font-size:0.72rem;font-weight:600;margin:0 0 0.4rem;text-transform:uppercase;letter-spacing:0.06em;font-family:{FONT}">Marché</p>'
-        f'<table style="border-collapse:collapse">{market}</table>'
+        f'<p style="color:{text_sec};font-size:0.72rem;font-weight:600;margin:0 0 0.2rem;text-transform:uppercase;letter-spacing:0.06em;font-family:{FONT}">Marché</p>'
+        f'<table style="border-collapse:collapse; width:100%">{market}</table>'
         f'</div>'
         f'<div>'
-        f'<p style="color:{text_sec};font-size:0.72rem;font-weight:600;margin:0 0 0.4rem;text-transform:uppercase;letter-spacing:0.06em;font-family:{FONT}">Émission</p>'
-        f'<table style="border-collapse:collapse">{issue}</table>'
+        f'<p style="color:{text_sec};font-size:0.72rem;font-weight:600;margin:0 0 0.2rem;text-transform:uppercase;letter-spacing:0.06em;font-family:{FONT}">Émission</p>'
+        f'<table style="border-collapse:collapse; width:100%">{issue}</table>'
         f'</div>'
         f'</div>'
-        f'<p style="color:{text_sec};font-size:0.78rem;margin:0.75rem 0 0;border-top:1px solid {border};padding-top:0.5rem;font-family:{FONT}">'
+        f'<p style="color:{text_sec};font-size:0.75rem;margin:0.6rem 0 0;border-top:1px solid {border};padding-top:0.4rem;font-family:{FONT}">'
         f'ESG Score &nbsp;<b style="color:{text_col}">{esg_score}</b> &nbsp;·&nbsp; '
-        f'MSCI ESG &nbsp;<b style="color:{text_col}">{msci}</b> &nbsp;·&nbsp; '
-        f'Green Bond &nbsp;<b style="color:{esg_color}">{"✓ Oui" if green == "Y" else "Non"}</b>'
+        f'MSCI ESG &nbsp;<b style="color:{text_col}">{msci}</b>'
         f'</p>'
         f'</div>'
     )
