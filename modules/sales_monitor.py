@@ -26,7 +26,7 @@ from utils.display import format_value, render_bond_card, render_switch_card, Y_
 from utils.plots import build_portfolio_chart
 
 
-@st.dialog("Détails de l'obligation", width="large")
+@st.dialog("Détails de l'obligation", width="small")
 def _bond_detail_dialog(bond: pd.Series, theme: str) -> None:
     st.markdown(render_bond_card(bond, theme), unsafe_allow_html=True)
     _, col_close = st.columns([3, 1])
